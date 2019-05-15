@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container head">
+  <h1 class="jumbotron-heading">Welcome to TinyLink!</h1>
+</div>
+
+<div class="login container">
+  <form action="login" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <br>
+    <button type="submit" class="btn btn-primary loginbutton">Log In</button>
+  </form>
+</div>  
+{% endblock %}
