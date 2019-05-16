@@ -44,7 +44,7 @@ def login_user(request):
                 login(request, user)
                 return HttpResponseRedirect('/tiny/')
             else:
-                return HttpResponse("Can not log in.")
+                return HttpResponse('<meta http-equiv="refresh" content="5; url=login" /><h1>Login details are incorrect. Try again...')
     else:
         form = LoginForm()
 
