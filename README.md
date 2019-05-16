@@ -40,3 +40,27 @@ $ ./manage.py shell
 >>> from tinylink.extras import make_users
 >>> make_users()
 ```
+
+Alternatively, to restore the tables form dump I use makefile
+
+```
+$ make restore
+```
+
+# Deploying
+
+The first step is to archive `site` folder
+
+    $ tar -cvf site.tar site
+
+Send it to the server and unarchive
+
+    $ tar xopf site.tar
+
+Not to forget adding secret key variable to `secret_key.py`.
+
+I created the makefile to *unfold* the project on a server
+
+    $ make start
+
+The project is deployed on a server.

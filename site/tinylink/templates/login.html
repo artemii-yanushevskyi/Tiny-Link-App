@@ -7,6 +7,11 @@
 </div>
 
 <div class="login container">
+  {% if invalid %}
+  <div class="alert alert-danger" role="alert">
+      Please, make sure login details are correct...
+  </div>
+  {% endif %}
   <form action="login" method="post">
     {% csrf_token %}
     {{ form }}

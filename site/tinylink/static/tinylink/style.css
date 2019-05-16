@@ -10,3 +10,10 @@ body {
 .head {
     margin-top: 10%;
 }
+
+@media only screen and (min-width: 1090px) {
+    .container {
+        max-width: 960px;
+        margin-bottom: 100px;
+    }
+  }

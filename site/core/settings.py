@@ -123,3 +123,9 @@ STATIC_URL = '/static/'
 # My changes
 
 INSTALLED_APPS.append('tinylink')
+
+ALLOWED_HOSTS += ['reasongrace.com', 'fabulous.alwaysdata.net', 'localhost']
+
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static/')
+

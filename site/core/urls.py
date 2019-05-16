@@ -20,6 +20,6 @@ from tinylink.views import tinylink_dispacher
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path('tiny/?', include('tinylink.urls')),
+    path('', include('tinylink.urls')),
     path('link/<str:hash>', tinylink_dispacher)
 ]

@@ -13,10 +13,9 @@ import hashlib
 def index(request):
     if not request.user.is_authenticated:
         # return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-        return HttpResponseRedirect('login')
+        return HttpResponseRedirect('/login/')
 
     name = str(request.user.first_name)
-    user = User.objects.get(username=request.user.username)
     try:
         links = Link.objects.filter(user=request.user).order_by('-created')
     except Link.DoesNotExist:
@@ -42,13 +41,13 @@ def login_user(request):
             print(user)
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect('/tiny/')
+                return HttpResponseRedirect('/')
             else:
-                return HttpResponse('<meta http-equiv="refresh" content="5; url=login" /><h1>Login details are incorrect. Try again...')
+                return render(request, 'login.html', {'form': form, 'invalid': True})
     else:
         form = LoginForm()
 
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'login.html', {'form': form, 'invalid': False})
 
 
 def make_link(request):
@@ -99,7 +98,7 @@ def make_link(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect('/tiny/')
+    return HttpResponseRedirect('/')
 
 def tinylink_dispacher(request, hash):
     print('Received hash %s. Redirecting...' % hash)
@@ -109,6 +108,8 @@ def tinylink_dispacher(request, hash):
         redirect_url.save()
 
     except Link.DoesNotExist:
-        return HttpResponse('<h1>The hash has not been mached</h1>')
+        return render(request, 'tinylink/match_error.html', {
+            'hash': hash,
+        })
 
     return HttpResponseRedirect('https://' + redirect_url.original)

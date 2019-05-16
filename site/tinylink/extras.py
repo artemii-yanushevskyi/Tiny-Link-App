@@ -1,4 +1,4 @@
-#!/Users/aware/Desktop/Tiny Link App/env/bin/python
+#! ../../env/bin/python
 
 import hashlib
 

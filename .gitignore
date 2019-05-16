@@ -3,3 +3,4 @@ env/
 db.sqlite3
 site/core/secret_key.py
 site/tinylink/migrations/
+site/core/static/admin/

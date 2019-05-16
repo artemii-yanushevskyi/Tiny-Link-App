@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="page-wrap d-flex flex-row align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12 text-center">
+                <h1 style="margin: 30% 0%">Can not dispatch the link <pre>{{ hash }}</pre>...</h1>
+                <div class="mb-4 lead">The link is deleted or has not been created yet.</div>
+                <a href="/tiny/" class="btn btn-link">Retun to dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

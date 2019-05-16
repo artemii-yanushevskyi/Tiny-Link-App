@@ -1,4 +1,4 @@
-#!/Users/aware/Desktop/Tiny-Link-App/env/bin/python
+#! ../env/bin/python
 """Django's command-line utility for administrative tasks."""
 import os
 import sys

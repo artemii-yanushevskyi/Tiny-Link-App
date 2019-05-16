@@ -14,7 +14,7 @@
     <div class="form-group">
       <label for="exampleInputEmail1">Original Link</label>
       <input type="url" class="form-control" id="originallink" name="original" required aria-describedby="Paste a link you want to shorten" placeholder="Enter a Link">
-      <small id="emailHelp" class="form-text text-muted">The link will be visible to you only.</small>
+      <small id="emailHelp" class="form-text text-muted">We value your privacey. The link will not be accessible to the public.</small>
     </div>
     <button id="submitlink" type="submit" class="btn btn-primary">Generate a Tiny Link</button>
   </form>
@@ -45,7 +45,7 @@ $.ajaxSetup({
       e.preventDefault();
       $.ajax({
           type: "POST",
-          url: "/tiny/ajax/tinylink/",
+          url: "/ajax/tinylink/",
           data: {
               originallink: $("#originallink").val(),
           },
