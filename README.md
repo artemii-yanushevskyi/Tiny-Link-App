@@ -1,4 +1,13 @@
 # The Web Application
+Shorten and save your links
+
+Hosted on http://reasongrace.com/
+
+# Features
+* User account
+* Link history
+* Single page view
+* Small alphabetical _tinylinks_
 
 # Debugging
 
@@ -64,3 +73,19 @@ I created the makefile to *unfold* the project on a server
     $ make start
 
 The project is deployed on a server.
+
+# Backing up the database
+
+The simple scirpt is embedded in makefile
+
+    $ make backup
+    
+To manually backup a table
+
+    $ ./manage.py dumpdata tinylink.Link --indent 4 > tinylink/fixtures/links.json
+
+# Credits
+
+https://docs.djangoproject.com/en/dev/
+
+http://djangogirls.org/
