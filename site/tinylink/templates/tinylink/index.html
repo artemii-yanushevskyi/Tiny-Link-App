@@ -9,8 +9,33 @@
   </p>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="tinylinkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Tinylink available!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+            <a href='' id='tinylink'></a>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="container" id="tap">
   <form>
+    {% csrf_token %}
     <div class="form-group">
       <label for="exampleInputEmail1">Original Link</label>
       <input type="url" class="form-control" id="originallink" name="original" required aria-describedby="Paste a link you want to shorten" placeholder="Enter a Link">
@@ -21,22 +46,27 @@
   <pre id="tinylink"></pre>
 </div>
 
-{% csrf_token %}
 <script type="text/javascript">
-// using jQuery
-var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-
-function csrfSafeMethod(method) {
-  // these HTTP methods do not require CSRF protection
-  return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-$.ajaxSetup({
+  // using jQuery
+  var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+  
+  function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  }
+  $.ajaxSetup({
     beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
+      if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      }
     }
-});
+  });
+</script>
+
+<script>
+  $(document).ready(function(){
+    
+  });
 </script>
 
 <script>
@@ -44,70 +74,79 @@ $.ajaxSetup({
     $("#submitlink").click(function(e) {
       e.preventDefault();
       $.ajax({
-          type: "POST",
-          url: "/ajax/tinylink/",
-          data: {
-              originallink: $("#originallink").val(),
-          },
-          dataType: 'json',
-          success: function (data) {
-            console.log(data);
-            // {exists: false, name: "Eric", tinylink: "-931", originallink: "kk"}
-            if(data.exists == false){
-              time = new Date().toLocaleTimeString('en-US', { hour12: true, 
-                                             hour: "numeric", 
-                                             minute: "numeric",
-                                             second: "numeric",
-                                             });
-              time = time.replace("AM", "a.m.").replace("PM","p.m.")
-              link = '<a href="../link/' + data.tinylink + '">' + data.tinylink + '</a>';
-              var output = '<tr><td>' + link + '</td>' + '<td style="word-break: break-all;">' + data.originallink + 
-                '</td>' + '<td>' + time + 
-                  '<span style="margin-left:8%" class="badge badge-success">New</span>' + '</td></tr>';
-
-              $('body > div.storage.container > table > tbody > tr:nth-child(1)').after(output);
-            }
-          },
-          error: function(result) {
+        type: "POST",
+        url: "/ajax/tinylink/",
+        data: {
+          originallink: $("#originallink").val(),
+        },
+        dataType: 'json',
+        success: function (data) {
+          console.log(data);
+          // {exists: false, name: "Eric", tinylink: "-931", originallink: "kk"}
+          if(data.exists == false){
+            time = new Date().toLocaleTimeString('en-US', { hour12: true, 
+              hour: "numeric", 
+              minute: "numeric",
+              second: "numeric",
+            });
+            time = time.replace("AM", "a.m.").replace("PM","p.m.")
+            link = '<a href="../link/' + data.tinylink + '">' + data.tinylink + '</a>';
+            var output = '<tr><td>' + link + '</td>' + '<td style="word-break: break-all;">' + data.originallink + 
+              '</td>' + '<td>' + time + 
+                '<span style="margin-left:8%" class="badge badge-success">New</span>' + '</td></tr>';
+                
+                $('body > div.storage.container > table > tbody > tr:nth-child(1)').after(output);
+              }
+            },
+            error: function(result) {
               alert('Error sending request or receiving the data.');
-          }
+            }
+          });
+        });
+        
+        $( "a.tinylink" ).click(function(event) {
+          event.preventDefault();
+          var tinylink = $(this).prop('href');
+          console.log(tinylink);   
+          $('#tinylinkModal').modal('show');
+          $( "#tinylink" ).text(tinylink);
+          $( "#tinylink" ).attr("href", tinylink);
+        });
       });
-    });
-  });
-</script>
-
-<div class="storage container">
-  {% load tz %}
-  {% timezone "Europe/Kiev" %}
-  <h2>Link Storage</h2>
-  <p>
-    The links you minified before
-    <table class='table' style="margin-bottom:50px;">
-        <tr>
+  </script>
+    
+    <div class="storage container">
+      {% load tz %}
+      {% timezone "Europe/Kiev" %}
+      <h2>Link Storage</h2>
+      <p>
+        The links you minified before
+        <table class='table' style="margin-bottom:50px;">
+          <tr>
             <th>Tiny Link</th>
             <th>Original Link</th>
             <th>Created</th>
-        </tr>
-        {% for link in links %}
-        <tr>
+          </tr>
+          {% for link in links %}
+          <tr>
             <td>
-              <a href="../link/{{ link.tiny }}">{{ link.tiny }}</a>
+              <a class='tinylink' href="../link/{{ link.tiny }}">{{ link.tiny }}</a>
             </td>
             <td style="word-break: break-all;">{{ link.original }}</td>
             <td>{{ link.created }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-  </p>
-  {% endtimezone %}
-  You can copy and share your <b>Tiny Links</b>.
-</div>
-
-<div class="login container">
-  <form action="logout" method="post">
-    {% csrf_token %}
-    <input class="loginbutton" type="submit" value="Log Out">
-  </form>
-</div>
-
-{% endblock %}
+          </tr>
+          {% endfor %}
+        </table>
+      </p>
+      {% endtimezone %}
+      You can copy and share your <b>Tiny Links</b>.
+    </div>
+    
+    <div class="login container">
+      <form action="logout" method="post">
+        {% csrf_token %}
+        <input class="loginbutton" type="submit" value="Log Out">
+      </form>
+    </div>
+    
+    {% endblock %}

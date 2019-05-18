@@ -8,8 +8,11 @@ from django.contrib.auth.models import User
 from random import randint
 import hashlib 
 
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
 
-# Create your views here.
+
 def index(request):
     if not request.user.is_authenticated:
         # return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
@@ -113,3 +116,42 @@ def tinylink_dispacher(request, hash):
         })
 
     return HttpResponseRedirect('https://' + redirect_url.original)
+
+def stats(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/login/')
+
+    name = str(request.user.first_name)
+    
+    user = request.user
+    user_id = user.pk
+
+    # any permission check will cache the current set of permissions
+    print('does user %s has permission "tinylink.view_link"?' % name, user.has_perm('tinylink.view_link'))
+
+    content_type = ContentType.objects.get_for_model(Link)
+    permission = Permission.objects.get(
+        codename='view_link',
+        content_type=content_type,
+    )
+    user.user_permissions.add(permission)
+
+    # Checking the cached permission set
+    print('does user %s has permission "tinylink.view_link"?' % name, user.has_perm('tinylink.view_link'))
+    # False
+
+    # Request new instance of User
+    # Be aware that user.refresh_from_db() won't clear the cache.
+    user = get_object_or_404(User, pk=user_id)
+
+    # Permission cache is repopulated from the database
+    print('does user %s has permission "tinylink.view_link"?' % name, user.has_perm('tinylink.view_link'))  # True
+
+    links = Link.objects.order_by('-created')
+
+    return render(request, 'tinylink/stats.html', {
+        'permission': 'have' if user.has_perm('tinylink.view_link') else "don't have",
+        'links': links,
+        'name': name,
+        'time': timezone.now(),
+    })

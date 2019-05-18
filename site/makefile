@@ -3,6 +3,7 @@ hellomake:
 
 start:
 	# when starting the project pulled from github
+	# needed only the first time
 	# tinylink
 	./manage.py migrate
 	./manage.py loaddata core/fixtures/users.json

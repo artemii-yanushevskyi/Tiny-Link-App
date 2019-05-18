@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container head">
+  <h1 class="jumbotron-heading">Welcome to TinyLink, {{name | title}}!</h1>
+  <p class="lead text-muted">
+    The service is engineered to keep your links small and handy. Store, manage, and share your links with ease 😸😸
+  </p>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="tinylinkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Tinylink available!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <a href='' id='tinylink'></a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+$(document).ready(function(){
+    $( "a.tinylink" ).click(function(event) {
+        event.preventDefault();
+        var tinylink = $(this).prop('href');
+        var link = $(this).attr('original-link');
+        console.log(tinylink + link);   
+        $('#tinylinkModal').modal('show');
+        $( "#tinylink" ).text(tinylink);
+        $( "#tinylink" ).attr("href", tinylink);
+        $( "#original" ).text(link);
+    });
+});
+</script>
+
+<script>
+$( ".tinylink" ).click(function(event) {
+    event.preventDefault();
+    console.log('fda');
+    alert( "Handler for .click() called." );
+});
+
+$( "a" ).click(function( event ) {
+  $( ".tinylinkModal .modal-body" ).val()
+    .append( "default " + event.type + " prevented" )
+    .appendTo( "#log" );
+    return false;
+});
+</script>
+
+<div class="storage container">
+  {% load tz %}
+  {% timezone "Europe/Kiev" %}
+  <h2>Link Storage</h2>
+  <p>
+    You {{ permission }} the permission to view statistics for Link 
+    <table class='table' style="margin-bottom:50px;">
+        <tr>
+            <th>Tiny Link</th>
+            <th>Original Link</th>
+            <th>User</th>
+            <th>Redirects</th>
+            <th>Created</th>
+        </tr>
+        {% for link in links %}
+        <tr>
+            <td>
+              <a class='tinylink' href="../link/{{ link.tiny }}" original-link="{{ link.original }}">{{ link.tiny }}</a>
+            </td>
+            <td style="word-break: break-all;">{{ link.original }}</td>
+            <td>{{ link.user.first_name }}</td>
+            <td>{{ link.count }}</td>
+            <td>{{ link.created }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+  </p>
+  {% endtimezone %}
+</div>
+
+<div class="login container">
+  <form action="logout" method="post">
+    {% csrf_token %}
+    <input class="loginbutton" type="submit" value="Log Out">
+  </form>
+</div>
+
+{% endblock %}
